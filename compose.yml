@@ -1,0 +1,33 @@
+services:
+  db:
+    image: mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=geheim
+      - MARIADB_DATABASE=DMS
+      - MARIADB_USER=DMS
+      - MARIADB_PASSWORD=geheimes-passwort
+    restart: on-failure:10
+    volumes:
+      - db-vol:/var/lib/mysql
+
+  pma:
+    image: phpmyadmin
+    environment:
+      - PMA_HOST=db
+    ports:
+      - 6080:80
+    restart: on-failure:10
+    depends_on:
+      - db
+
+  mydms:
+    build: ./DMS
+    ports:
+      - 5000:5000
+    restart: on-failure:10
+    depends_on:
+      - db
+
+volumes:
+  db-vol:
+    name: db-vol-dms
